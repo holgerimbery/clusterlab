@@ -1,5 +1,6 @@
 
 ## some stuff for a sd-card less Raspberry Pi cluster,no need to work with sd-cards any more
+this repro contains working code, but needs a little lipstick to look beautiful
 
 my equipment:
 
