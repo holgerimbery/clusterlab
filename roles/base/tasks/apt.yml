@@ -4,18 +4,16 @@
     state: present
     force: yes
 
-- name: Add Kubernetes Repo Key
-  apt_key: url=https://packages.cloud.google.com/apt/doc/apt-key.gpg
-
-- name: Add Kubernetes Repo
-  # Try to pick up latest stable builds. Switch over to '-unstable' if targeting latest releases
-  apt_repository: repo='deb http://apt.kubernetes.io/ kubernetes-xenial main' state=present
-
 - name: Update APT package cache and upgrade
   apt:
     update_cache: yes
     autoremove: yes
     upgrade: yes
+
+- name: Install docker
+  # Use recommended docker installation shell script
+  shell: curl -sSL https://get.docker.com | sh
+
 
 - name: Install Packages
   apt:

@@ -1,0 +1,99 @@
+version: '3'
+
+services:
+  proxy:
+    image: dockerflow/docker-flow-proxy:latest
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - agent_network
+    environment:
+      - LISTENER_ADDRESS=swarm-listener
+      - MODE=swarm
+    deploy:
+      replicas: 2
+
+  swarm-listener:
+    image: dockerflow/docker-flow-swarm-listener:18.06.03-26-linux-arm
+    networks:
+      - agent_network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DF_NOTIFY_CREATE_SERVICE_URL=http://proxy:8080/v1/docker-flow-proxy/reconfigure
+      - DF_NOTIFY_REMOVE_SERVICE_URL=http://proxy:8080/v1/docker-flow-proxy/remove
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  letsencrypt-companion:
+    image: holgerimbery/docker-flow-letsencrypt:latest
+    networks:
+      - agent_network
+    environment:
+      # change to meet your requirements
+      - DOMAIN_1=('docker.imbery.de')
+      - CERTBOT_EMAIL=holger@imbery.de
+      - PROXY_ADDRESS=proxy
+      - CERTBOT_CRON_RENEW=('0 3 * * *' '0 15 * * *')
+    volumes:
+          - le-certs:/etc/letsencrypt
+    deploy:
+      labels:
+        - com.df.servicePath=/.well-known/acme-challenge
+        - com.df.notify=true
+        - com.df.distribute=true
+        - com.df.port=80
+      replicas: 1
+
+
+  agent:
+    image: portainer/agent
+    environment:
+      # REQUIRED: Should be equal to the service name prefixed by "tasks." when
+      # deployed inside an overlay network
+      AGENT_CLUSTER_ADDR: tasks.agent
+      # AGENT_PORT: 9001
+      # LOG_LEVEL: debug
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - agent_network
+    deploy:
+      mode: global
+
+  portainer:
+    image: portainer/portainer
+    ports:
+      - "9000:9000"
+    volumes:
+      - portainer_datastore:/data
+    networks:
+      - agent_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        - com.df.notify=true
+        - com.df.distribute=true
+        # change to meet your requirements
+        - com.df.serviceDomain=docker.imbery.de
+        - com.df.httpsOnly=true
+        - com.df.reqPathSearch=/portainer
+        - com.df.port=9000
+    command: "-H tcp://tasks.agent:9001 --tlsskipverify --templates https://raw.githubusercontent.com/holgerimbery/feeder/master/templates.json"
+
+
+networks:
+  agent_network:
+    driver: overlay
+
+volumes:
+  portainer_datastore:
+    external: true
+  le-certs:
+    external: true
+

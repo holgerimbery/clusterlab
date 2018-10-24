@@ -21,6 +21,5 @@
 - name: Set hostname
   hostname: name="{{ name }}"
 
-
 - name: Restart hostname
   shell: "hostnamectl set-hostname {{ name }}"
