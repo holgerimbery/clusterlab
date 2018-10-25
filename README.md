@@ -1,12 +1,12 @@
 
-## some stuff for a sd-card less Raspberry Pi cluster,no need to work with sd-cards any more
+## build a a sd-card-less Raspberry Pi cluster
 this repro contains working code, but needs a little lipstick to look beautiful
 
 my equipment:
 
 1o Raspberry Pi 3B+ in a 19" 2HE rack mounted assembly, one with a SSD [attached via USB](https://www.amazon.de/USB-SATA-Adapter-Kabel-UASP/dp/B00HJZJI84/ref=sr_1_3?ie=UTF8&qid=1540311792&sr=8-3&keywords=usb+sata+adapter+2%2C5+startech). 
 
-Keep an eye on the power consumption of the SSD your Raspberry won´t boot if the consumption is greater than 600mA. 
+Keep an eye on the power consumption of the SSD, your Raspberry won´t boot if the consumption is greater than 600mA. 
 
 
 ## Setup Controll Server (tftp/nfs host, boots from USB-SSD) 
@@ -98,17 +98,19 @@ Stop dnsmasq breaking DNS resolving:
 sudo rm /etc/resolvconf/update.d/dnsmasq
 sudo reboot
 ```
-Configure your DHCP Server to forward fftp request "next-server" to the IP of this Raspberry Pi
+Configure your DHCP Server to forward the tftp request "next-server" to the IP of this Raspberry Pi
 Now start tcpdump so you can search for DHCP packets from the client Raspberry Pi:
 ```
 sudo tcpdump -i eth0 port bootpc
 ```
-Connect the client Raspberry Pi to your network and power it on. Check that the LEDs illuminate on the client after around 10 seconds, then you should get a packet from the client "DHCP/BOOTP, Request from ..."
-please write down the mac-adress of each and every raspberry Pi you want to enable with networkboot
+Connect the client Raspberry Pi to your network and power it on. Check that the LEDs illuminate on the client after around 10 seconds, then you should get a packet from the client "DHCP/BOOTP, Request from ...".
 
 ```
 IP 0.0.0.0.bootpc > 255.255.255.255.bootps: BOOTP/DHCP, Request from b8:27:eb...
 ```
+
+Please write down the mac-adress of your Raspberry Pi and repeat it for every Raspberry you want to enable for netbooting.
+
 Now we need to modify the dnsmasq configuration to enable DHCP to reply to the device. Press CTRL+C on the keyboard to exit the tcpdump program, then type the following:
 ```
 echo | sudo tee /etc/dnsmasq.conf
@@ -137,8 +139,6 @@ sudo systemctl restart dnsmasq.service
 
 Next, you will need to copy all files from /boot-partition to a folder /tftpboot/"macadress with -"/ 
 
-
-
 Restart dnsmasq for good measure:
 ```
 sudo systemctl restart dnsmasq
@@ -151,7 +151,6 @@ halt Raspberry Pi, remove SD and restart.
 
 
 ## Setup NTFS-Boot for Clients (diskless boot)
-
 
 This should now allow your Raspberry Pi to boot through until it tries to load a root filesystem (which it doesn't have). All we have to do to get this working is to export the /nfs/master_raspbian filesystem we created earlier.
 ```
@@ -176,5 +175,6 @@ You should substitute the IP address here with the IP address you have noted dow
 Finally, edit /nfs/"target"/etc/fstab and remove the /dev/mmcblkp1 and p2 lines (only proc should be left).
 
 It´s a good practice to put an operating systems root files system in a master_xyz directory and use the included ansible playbook to generate client specific directories in /nfs. 
-The same structure for the /boot Partition, one master_xyz and several client specific directory within /sftpboot, a symbolic link with the clients serialnumber as the name should then point to the client specific directory
+
+The same structure for the /boot Partition, one master_xyz and several client specific directory within /sftpboot, a symbolic link with the clients mac-address as the name should then point to the client specific directory
 
