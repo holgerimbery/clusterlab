@@ -1,1 +1,1 @@
-ansible-playbook -k -i hosts setup.yml
+ansible-playbook -k -i hosts setup_cluster.yml

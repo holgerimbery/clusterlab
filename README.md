@@ -104,6 +104,7 @@ Now start tcpdump so you can search for DHCP packets from the client Raspberry P
 sudo tcpdump -i eth0 port bootpc
 ```
 Connect the client Raspberry Pi to your network and power it on. Check that the LEDs illuminate on the client after around 10 seconds, then you should get a packet from the client "DHCP/BOOTP, Request from ..."
+please write down the mac-adress of each and every raspberry Pi you want to enable with networkboot
 
 ```
 IP 0.0.0.0.bootpc > 255.255.255.255.bootps: BOOTP/DHCP, Request from b8:27:eb...
@@ -121,6 +122,7 @@ dhcp-range=10.42.0.255,proxy
 log-dhcp
 enable-tftp
 tftp-root=/tftpboot
+tftp-unique-root=mac
 pxe-service=0,"Raspberry Pi Boot"
 ```
 Where the first address of the dhcp-range line is, use the broadcast address you noted down earlier.
@@ -132,19 +134,8 @@ sudo chmod 777 /tftpboot
 sudo systemctl enable dnsmasq.service
 sudo systemctl restart dnsmasq.service
 ```
-Now monitor the dnsmasq log:
-```
-tail -F /var/log/daemon.log
-```
-You should see something like this:
-```
-raspberrypi dnsmasq-tftp[1903]: file /tftpboot/bootcode.bin not found
-```
-Next, you will need to copy bootcode.bin into /tftboot directory 
-```
-wget https://github.com/Hexxeh/rpi-firmware/raw/next/bootcode.bin
-```
-and create "serial" subdirectorys for each Raspberry Pi all the files from /boot.
+
+Next, you will need to copy all files from /boot-partition to a folder /tftpboot/"macadress with -"/ 
 
 
 
@@ -176,7 +167,7 @@ sudo systemctl enable nfs-kernel-server
 sudo systemctl restart nfs-kernel-server
 ```
 
-Edit /tftpboot/"serial"/cmdline.txt and from root= onwards, and replace it with:
+Edit /tftpboot/"macadress with-"/cmdline.txt and from root= onwards, and replace it with:
 ```
 root=/dev/nfs nfsroot=10.42.0.211:/nfs/"target",vers=3 rw ip=dhcp rootwait elevator=deadline
 ```
