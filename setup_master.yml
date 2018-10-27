@@ -1,12 +1,11 @@
 ---
 - name: Setup Raspberry Pi Base cluster devices
-  hosts: clusterlab
+  hosts: master
   gather_facts: yes
   remote_user: pi
   become: true
   become_method: sudo
   vars_files:
     - config.yml
-
   roles:
-    - base
+    - master

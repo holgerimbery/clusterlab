@@ -1,0 +1,13 @@
+---
+- name: Activate booting from usb ssd
+  hosts: master
+  gather_facts: yes
+  remote_user: pi
+  become: true
+  become_method: sudo
+  tasks:
+     - name: Transfer the script
+       copy: src=Ressources/usb-boot.sh dest=/home/pi mode=0755
+
+     - name: Execute the script
+       command: /home/pi/usb-boot.sh

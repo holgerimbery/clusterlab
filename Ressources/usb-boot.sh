@@ -176,8 +176,7 @@ fi
 PTUUID="$(blkid "${USB_DEST}" | sed -n 's|^.*PTUUID="\(\S\+\)".*|\1|p')"
 
 mntusb
-sed -i "s|^\(.*root=\)\S\+\(\s\+.*\)$|\1PARTUUID=${PTUUID}-02\2|" "${MNTPATH}/boot/cmdline.txt"
-sed -i "s|^\S\+\(\s\+/boot\s\+.*\)$|/dev/mmcblk0p1\1|" "${MNTPATH}/etc/fstab"
+sed -i "s|^\S\+\(\s\+/boot\s\+.*\)$|PARTUUID=${PTUUID}\1|" "${MNTPATH}/etc/fstab"
 sed -i "s|^\S\+\(\s\+/\s\+.*\)$|PARTUUID=${PTUUID}-02\1|" "${MNTPATH}/etc/fstab"
 umntusb
 

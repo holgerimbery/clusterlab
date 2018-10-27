@@ -4,6 +4,8 @@ timezone: "Europe/Berlin"
 
 # User pi's password.
 # Need to be hashed as coming from 'mkpasswd'. Can be omitted, then the default password ('raspberry') is used
+#  python -c "from passlib.hash import sha512_crypt; print sha512_crypt.encrypt('<password>')"
+#  above command requires the PassLib library: sudo pip install passlib
 user:
  password: "hashed password"
 

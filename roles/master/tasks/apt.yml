@@ -15,9 +15,4 @@
   shell: curl -sSL https://get.docker.com | sh
 
 
-- name: Install Packages
-  apt:
-    name: ['hdparm', 'iperf', 'mtr-tiny', 'bridge-utils', 'socat', 'jq', 'vim','dnsutils', 'nfs-common', 'rpcbind']
-    force: yes
-    state: present
 

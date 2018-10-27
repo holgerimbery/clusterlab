@@ -1,32 +1,21 @@
 [pis]
-192.168.1.100 name=clusterlabcontroll
-192.168.1.101 name=clusterlab01
-192.168.1.102 name=clusterlab02
-192.168.1.103 name=clusterlab03
-192.168.1.104 name=clusterlab04
-192.168.1.105 name=clusterlab05
-192.168.1.106 name=clusterlab06
-192.168.1.107 name=clusterlab07
-192.168.1.108 name=clusterlab08
-192.168.1.109 name=clusterlab09
-
-
-[clusterlab]
-192.168.1.101
-192.168.1.102
-192.168.1.103
-192.168.1.104
-192.168.1.105
-192.168.1.106
-192.168.1.107
-192.168.1.108
-192.168.1.109
+192.168.1.100 name=cluster00
+192.168.1.101 name=cluster01
+192.168.1.102 name=cluster02
+192.168.1.103 name=cluster03
+192.168.1.104 name=cluster04
+192.168.1.105 name=cluster05
+192.168.1.106 name=cluster06
+192.168.1.107 name=cluster07
+192.168.1.108 name=cluster08
+192.168.1.109 name=cluster09
 
 [master]
-192.168.1.101
+192.168.1.100
 
 
 [nodes]
+192.168.1.101
 192.168.1.102
 192.168.1.103
 192.168.1.104
@@ -35,6 +24,3 @@
 192.168.1.107
 192.168.1.108
 192.168.1.109
-
-[controll]
-192.168.1.100
