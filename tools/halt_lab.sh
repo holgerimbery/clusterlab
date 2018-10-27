@@ -1,3 +1,3 @@
 #!/bin/sh
 
-ansible clusterlab -i ../hosts --become --args "/sbin/halt" --forks 4 --user pi
+ansible nodes -i ../hosts --become --args "/sbin/halt" --forks 4 --user pi

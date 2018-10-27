@@ -221,8 +221,15 @@ Do something useful with your cluster :-)
 
 ```
 cd cluster
-./usb.boot.sh
+./copy-usb-boot.sh
 ```
+ssh to master
+```
+sudo -Es
+./usb-boot.sh
+´´´
+halt master, remove sd-card and powercycle RPi
+
 
 
 ### Install Docker
