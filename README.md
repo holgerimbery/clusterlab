@@ -227,7 +227,7 @@ ssh to master
 ```
 sudo -Es
 ./usb-boot.sh
-´´´
+```
 halt master, remove sd-card and powercycle RPi
 
 
@@ -242,7 +242,8 @@ halt master, remove sd-card and powercycle RPi
 cd cluster
 ./setup_nodes.sh
 ```
-sometimes you may start the last command several time in a row until you get green ok= for all RPis from the playbook at the end.
+
+sometimes you have to start the last command several time in a row until you get green ok= for all RPis from the playbook at the end.
 
 install docker on the master RPi
 
