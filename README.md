@@ -285,11 +285,11 @@ docker node ls
 * ssh to the master and download the stack file
 * option one: with local acess
 ```
-curl -LO https://raw.githubusercontent.com/holgerimbery/feeder/master/portainer-agent-stack.yml
+curl -LO https://raw.githubusercontent.com/holgerimbery/feeder-stack/master/portainer-agent-stack.yml
 ```
 * option two: with external access and docker-flow-proxy and letsencrypt certificate 
 ```
-curl -LO https://raw.githubusercontent.com/holgerimbery/feeder/master/portainer-agent-proxy-stack.yml
+curl -LO https://raw.githubusercontent.com/holgerimbery/feeder-stack/master/portainer-agent-proxy-stack.yml
 ```
 * edit the stackfile to be compliant with your needs
   (option2 - your email address and your domainname for the cerificate and the proxy session) 
