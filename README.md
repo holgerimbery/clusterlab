@@ -1,6 +1,13 @@
 
 # feeder-cluster - a Raspberry Pi Cluster (RPi 3B+) without SD Cards
 
+![feeder_logo](https://github.com/holgerimbery/environment/raw/master/feeder_logo_small.jpg)
+
+*feeder (small container ship)* 
+
+is a Raspberry Pi 3B+ cluster with docker and as an option to install docker swarm with portainer gui or kubernetes. all worker nodes operate in a diskless mode.
+
+
 *Network booting works only for the wired adapter. Booting over **wireless LAN** is not supported.
 It is also important that there is already a **working DHCP server** on the local network.*
 
@@ -212,6 +219,9 @@ ssh pi@192.168.10.101
 ## What to do next?
 Do something useful with your cluster :-) 
 * install ansible on your workstation clone the repository to your local disk
+```
+git clone https://github.com/holgerimbery/feeder-cluster.git feeder-cluster
+```
 * copy config.sample.yml to config.yml
 * generate a password hash for the password you created in the first step while setting this up and put it in the config.yml
 * copy hosts.sample to hosts and edit it to meet your requirements
@@ -251,7 +261,8 @@ install docker on the master RPi
 cd cluster
 ./setup_master.sh
 ```
-### Create a Docker swarm
+### Docker swarm with Gui
+#### Initialise the swarm
 
 ssh to your master and init a swarm
 
@@ -269,3 +280,32 @@ ssh to the master and
 docker node ls
 ```
 
+#### install portainer on the swarm for graphical management
+
+* ssh to the master and download the stack file
+* option one: with local acess
+```
+curl -LO https://raw.githubusercontent.com/holgerimbery/feeder/master/portainer-agent-stack.yml
+```
+* option two: with external access and docker-flow-proxy and letsencrypt certificate 
+```
+curl -LO https://raw.githubusercontent.com/holgerimbery/feeder/master/portainer-agent-proxy-stack.yml
+```
+* edit the stackfile to be compliant with your needs
+  (option2 - your email address and your domainname for the cerificate and the proxy session) 
+* start the cluster - option one
+```
+docker stack deploy -c portainer-agent-stack.yml portainer
+```
+* or for option two, you need to setup a forwarding rule on your internet-access router port 80 & 443
+```
+docker stack deploy -c portainer-agent-stack.yml portainer
+```
+* the management interface will be available for option one at
+```
+https://"<ipadressofmaster>":9000
+```
+* or for option 2 at
+```
+https://"<your-configured-domainname>"
+```
