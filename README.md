@@ -32,7 +32,7 @@ to the ssh terminal you have with your master RPi.
 
 Let´s start with some basics, new password and update to the latest versions.
 
-```
+```bash
 passwd 
 sudo -Es
 apt update
@@ -42,7 +42,7 @@ transfer your public key to the RPi to enable password less login, be aware that
 
 ## Setup systemd-networkd
 
-```
+```bash
 mkdir -p /var/log/journal
 systemd-tmpfiles --create --prefix /var/log/journal
 apt --yes install systemd-container
@@ -66,7 +66,7 @@ dns server        192.168.1.1
 
 Of course you have to use the ip addresses from your network. Look what are yours. You may find your dns server with cat /etc/resolv.conf. If in doubt you may use googles dns server 8.8.8.8. To set the static ip address write this file:
 
-```
+```bash
 cat > /etc/systemd/network/04-eth.network <<EOF
 [Match]
 Name=e*
@@ -78,7 +78,7 @@ EOF
 ```
 
 Rename hostname from raspberrypi to master:
-```
+```bash
 sed -i 's/raspberrypi/cluster00/' /etc/hostname
 sed -i 's/raspberrypi/cluster00/g' /etc/hosts
 ```
@@ -91,7 +91,7 @@ Reboot.
 ssh into your master. Remember that is has now a new static ip address.
 
 This setup will also be used for the worker, so we copy it to a directory we will later mount as root partition for the worker.
-```
+```bash
 sudo -Es
 mkdir -p /nfs/worker_default
 rsync -xa --exclude /nfs / /nfs/worker_default
@@ -101,7 +101,7 @@ rsync -xa /boot/ /tftpboot/00-00-00-00-00-00
 Don't worry now. Depending on your SD Card copying of 1.1 GByte will take about 15 minutes or longer. Look at the green led on your RasPi.
 
 When finished to prepare the network and the name of the worker:
-```
+```bash
 rm /nfs/worker_default/etc/systemd/network/04-eth.network
 sed -i 's/cluster00/worker_default/' /nfs/worker_default/etc/hostname
 sed -i 's/cluster00/worker_default/g' /nfs/worker_default/etc/hosts
@@ -109,10 +109,10 @@ sed -i 's/cluster00/worker_default/g' /nfs/worker_default/etc/hosts
 
 Now we start the worker in a container. This is similar to chroot but more powerful. We regenerate SSH host keys so ssh will not complain about spoofing ("it has already seen the same host with other ip address"):
 Login and execute following commands. This will create new SSH2 server keys and it tries to start the ssh.service but that will fail because the ethernet interface is already used by the master. Starting the ssh.service (here with error) is essentional because we are headless on the worker. If the worker is running on its own hardware this should go without error.
-```
+```bash
 systemd-nspawn -D /nfs/worker_default /sbin/init
 ```
-```
+```bash
 sudo rm /etc/ssh/ssh_host_*
 sudo dpkg-reconfigure openssh-server
 logout
