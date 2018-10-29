@@ -124,14 +124,14 @@ Exit from container with CTRL+(short three times)]. [Mac User CTRL+OPTION+(short
 
 Now we will install a tftp server that is needed to send boot files to the worker. The program dnsmasq will provide this. Also we install the network sniffer tcpdump to look if the worker requests its boot files the right way:
 
-```
+```bash
 apt --yes install dnsmasq tcpdump
 # Stop dnsmasq breaking DNS resolving:
 rm /etc/resolvconf/update.d/dnsmasq
 ```
 
 Now start tcpdump so you can search for DHCP packets from the worker:
-```
+```bash
 tcpdump -i eth0 port bootpc
 ```
 
@@ -149,7 +149,7 @@ If you have more than one raspberry repeat the step above to notice all mac adre
 
 Then we have to configure dnsmasq to serve boot files via tftp.
 Write this file:
-```
+```bash
 cat > /etc/dnsmasq.conf <<EOF
 port=0
 dhcp-range=192.168.1.255,proxy
@@ -167,7 +167,7 @@ The subdirectory for the specific worker (its mac address, we have noticed with 
 put all mac adresse in the for in in line with a space in between.
 
 
-```
+```bash
 cat > /home/pi/tftpboot_clients.sh <<EOF
 #!/bin/bash
 j=0
@@ -196,7 +196,7 @@ chmod 755 /home/pi/tftpboot_clients.sh
 ## Set up NFS root
 
 This should now allow your Raspberry Pi to boot through until it tries to load a root filesystem that is normally located at the second partition of the SD Card (which it doesn't have). All we have to do to get this working is to export the /nfs/ filesystem we created earlier.
-```
+```bash
 apt install nfs-kernel-server
 systemctl enable rpcbind
 systemctl enable nfs-kernel-server
@@ -207,19 +207,19 @@ systemctl restart nfs-kernel-server
 
 Now power cycle the worker RPis and they should boot. You can monitor again. You will also see what ip address your worker has:
 
-```
+```bash
 journalctl --unit dnsmasq.service --follow
 ```
 
 Now you should be able to ssh into the worker e.g. with:
-```
+```bash
 ssh pi@192.168.10.101
 ```
 
 ## What to do next?
 Do something useful with your cluster :-) 
 * install ansible on your workstation clone the repository to your local disk
-```
+```bash
 git clone https://github.com/holgerimbery/feeder-cluster.git feeder-cluster
 ```
 * copy config.sample.yml to config.yml
@@ -229,12 +229,12 @@ git clone https://github.com/holgerimbery/feeder-cluster.git feeder-cluster
 ### booting the master from USB-SSD
 [attached a SSD via USB](https://www.amazon.de/USB-SATA-Adapter-Kabel-UASP/dp/B00HJZJI84/ref=sr_1_3?ie=UTF8&qid=1540311792&sr=8-3&keywords=usb+sata+adapter+2%2C5+startech) to the master RPi, be aware all data on the SSD will be ereased during the automated process
 
-```
+```bash
 cd cluster
 ./copy-usb-boot.sh
 ```
 ssh to master
-```
+```bash
 sudo -Es
 ./usb-boot.sh
 ```
@@ -248,7 +248,7 @@ halt master, remove sd-card and powercycle RPi
 * update all worker nodes, install docker with permitions and  regenerate all ssh host keys with a single command
 
 
-```
+```bash
 cd cluster
 ./setup_nodes.sh
 ```
@@ -257,7 +257,7 @@ sometimes you have to start the last command several time in a row until you get
 
 install docker on the master RPi
 
-```
+```bash
 cd cluster
 ./setup_master.sh
 ```
@@ -266,17 +266,17 @@ cd cluster
 
 ssh to your master and init a swarm
 
-```
+```bash
 docker swarm init
 ```
 remember the "docker swarm join --token §$%&/($%&/()%&/()" part of the output and join all your workers to the swarm
 
-```
+```bash
 ansible nodes -i hosts --become --args "join output" --user pi
 ```
 
 ssh to the master and
-```
+```bash
 docker node ls
 ```
 
@@ -284,28 +284,28 @@ docker node ls
 
 * ssh to the master and download the stack file
 * option one: with local acess
-```
+```bash
 curl -LO https://raw.githubusercontent.com/holgerimbery/feeder-stack/master/portainer-agent-stack.yml
 ```
 * option two: with external access and docker-flow-proxy and letsencrypt certificate 
-```
+```bash
 curl -LO https://raw.githubusercontent.com/holgerimbery/feeder-stack/master/portainer-agent-proxy-stack.yml
 ```
 * edit the stackfile to be compliant with your needs
   (option2 - your email address and your domainname for the cerificate and the proxy session) 
 * start the cluster - option one
-```
+```bash
 docker stack deploy -c portainer-agent-stack.yml portainer
 ```
 * or for option two, you need to setup a forwarding rule on your internet-access router port 80 & 443
-```
+```bash
 docker stack deploy -c portainer-agent-stack.yml portainer
 ```
 * the management interface will be available for option one at
-```
+```bash
 https://"<ipadressofmaster>":9000
 ```
 * or for option 2 at
-```
+```bash
 https://"<your-configured-domainname>"
 ```
