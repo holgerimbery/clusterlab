@@ -14,7 +14,20 @@ It is also important that there is already a **working DHCP server** on the loca
 
 #### My own lab:
 * 1o Raspberry Pi 3B+ in a 19" 2HE rack mounted assembly
+  found this really nice one on [thingiverse](https://www.thingiverse.com/thing:3022136) 
 * master is booting from a SSD [attached via USB](https://www.amazon.de/USB-SATA-Adapter-Kabel-UASP/dp/B00HJZJI84/ref=sr_1_3?ie=UTF8&qid=1540311792&sr=8-3&keywords=usb+sata+adapter+2%2C5+startech). 
+
+Network stucture in this HowTo
+Element  | address
+------------ | -------------
+network | 192.168.1.0
+networkmask | 255.255.255.0
+Router | 192.168.1.1
+DNS (local) | 192.168.1.1
+master RPi | 192.168.1.100
+worker aka nodes | 192.168.1.101-109
+
+
 
 Keep an eye on the power consumption of the SSD, your Raspberry won´t boot if the consumption is greater than 600mA. 
 
