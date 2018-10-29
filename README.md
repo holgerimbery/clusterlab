@@ -5,7 +5,7 @@
 
 *feeder (small container ship)* 
 
-is a Raspberry Pi 3B+ cluster with docker and as an option to install docker swarm with portainer gui or kubernetes. all worker nodes operate in a diskless mode.
+a Raspberry Pi 3B+ cluster with docker and - as an option-  ready to install docker swarm with portainer gui or kubernetes. All worker nodes operate in a diskless mode.
 
 
 *Network booting works only for the wired adapter. Booting over **wireless LAN** is not supported.
