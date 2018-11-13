@@ -23,3 +23,16 @@
 
 - name: Restart hostname
   shell: "hostnamectl set-hostname {{ name }}"
+
+- name: Create mountable dir
+      file: path=/srv state=directory mode=777 owner=root group=root
+
+- name: set mountpoints
+      mount: name=/srv src={{hostvars[groups['master'][0]]['ansible_eth0']['ipv4']['address']}}:/nfs/common fstype=nfs opts=defaults,nobootwait dump=0 passno=2 state=mounted
+
+- name: modify /etc/fstab
+  lineinfile:
+      file: /etc/fstab
+      line: {{hostvars[groups['master'][0]]['ansible_eth0']['ipv4']['address']}}:/nfs/common /srv nfs auto,rw,rsize=8192,wsize=8192 0 0
+      insertbefore: 'EOF'
+      
