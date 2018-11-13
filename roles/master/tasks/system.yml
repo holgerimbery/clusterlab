@@ -23,3 +23,10 @@
 
 - name: Restart hostname
   shell: "hostnamectl set-hostname {{ name }}"
+
+- name: Create common Directory on NFS
+    file:
+    path: /nfs/common
+    state: directory
+    mode: 0777
+    recurse: yes
