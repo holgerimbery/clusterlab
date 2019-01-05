@@ -1,1 +1,1 @@
-ansible-playbook -i hosts setup_nodes.yml
+ansible-playbook -i inventory setup_nodes.yml

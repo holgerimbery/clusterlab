@@ -1,0 +1,26 @@
+[pis]
+cluster00 ansible_host=192.168.1.100
+cluster01 ansible_host=192.168.1.101
+cluster02 ansible_host=192.168.1.102
+cluster03 ansible_host=192.168.1.103
+cluster04 ansible_host=192.168.1.104
+cluster05 ansible_host=192.168.1.105
+cluster06 ansible_host=192.168.1.106
+cluster07 ansible_host=192.168.1.107
+cluster08 ansible_host=192.168.1.108
+cluster09 ansible_host=192.168.1.109
+
+[master]
+cluster00 ansible_host=192.168.1.100
+
+
+[nodes]
+cluster01 ansible_host=192.168.1.101
+cluster02 ansible_host=192.168.1.102
+cluster03 ansible_host=192.168.1.103
+cluster04 ansible_host=192.168.1.104
+cluster05 ansible_host=192.168.1.105
+cluster06 ansible_host=192.168.1.106
+cluster07 ansible_host=192.168.1.107
+cluster08 ansible_host=192.168.1.108
+cluster09 ansible_host=192.168.1.109

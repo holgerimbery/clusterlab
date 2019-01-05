@@ -1,1 +1,1 @@
-ansible-playbook -i hosts copy-usb-boot.yml
+ansible-playbook -i inventory copy-usb-boot.yml

@@ -14,5 +14,9 @@
 #  # Use recommended docker installation shell script
   shell: curl -sSL https://get.docker.com | sh
 
-
+- name: Install Packages
+  apt:
+    name: ['hdparm', 'iperf', 'mtr-tiny', 'bridge-utils', 'socat', 'jq', 'vim','dnsutils', 'nfs-common', 'rpcbind', 'nfs-kernel-server']
+    force: yes
+    state: present
 

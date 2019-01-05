@@ -15,24 +15,34 @@
     dest: /etc/profile.d/default_locale.sh
     mode: 0755
 
-- name: Add hosts
-  template: src=hosts dest=/etc/hosts
+- name: Ensure hostname set
+  hostname:
+    name: "{{ inventory_hostname }}"
+  when: not inventory_hostname is match('(\d{1,3}\.){3}\d{1,3}')
+  register: hostname
+  tags: hostname
 
-- name: Set hostname
-  hostname: name="{{ name }}"
-
-- name: Restart hostname
-  shell: "hostnamectl set-hostname {{ name }}"
+- name: Ensure hostname is in /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^{{ ansible_default_ipv4.address }}.+$"
+    line: "{{ ansible_default_ipv4.address }} {{ ansible_hostname }}"
+  register: hostname
+  tags: hostname
 
 - name: Create mountable dir
-      file: path=/srv state=directory mode=777 owner=root group=root
+  file:
+    path: /nfs/common
+    state: directory
+    mode: 0777
+    recurse: yes
 
 - name: set mountpoints
-      mount: name=/srv src={{hostvars[groups['master'][0]]['ansible_eth0']['ipv4']['address']}}:/nfs/common fstype=nfs opts=defaults,nobootwait dump=0 passno=2 state=mounted
+  mount: 
+    name: /srv 
+    src: "{{ hostvars[groups['master'][0]].ansible_host }}:nfs/common"
+    fstype: nfs 
+    state: mounted
 
-- name: modify /etc/fstab
-  lineinfile:
-      file: /etc/fstab
-      line: {{hostvars[groups['master'][0]]['ansible_eth0']['ipv4']['address']}}:/nfs/common /srv nfs auto,rw,rsize=8192,wsize=8192 0 0
-      insertbefore: 'EOF'
+
       

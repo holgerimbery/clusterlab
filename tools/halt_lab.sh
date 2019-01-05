@@ -1,3 +1,3 @@
 #!/bin/sh
 
-ansible nodes -i ../hosts --become --args "/sbin/halt" --forks 4 --user pi
+ansible nodes -i ../inventory --become --args "/sbin/halt" --forks 4 --user pi

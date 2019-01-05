@@ -1,1 +1,1 @@
-ansible-playbook -i hosts setup_master.yml
+ansible-playbook -i inventory setup_master.yml

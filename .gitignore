@@ -1,9 +1,6 @@
-hosts
 config.yml
 bin/
 *.tar.gz
-run/pi-cluster.cfg
-run/kubeadm-token.txt
 images/*
 *.retry
 run/admin.conf

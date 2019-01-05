@@ -15,18 +15,48 @@
     dest: /etc/profile.d/default_locale.sh
     mode: 0755
 
-- name: Add hosts
-  template: src=hosts dest=/etc/hosts
+- name: Ensure hostname set
+  hostname:
+    name: "{{ inventory_hostname }}"
+  when: not inventory_hostname is match('(\d{1,3}\.){3}\d{1,3}')
+  register: hostname
+  tags: hostname
 
-- name: Set hostname
-  hostname: name="{{ name }}"
-
-- name: Restart hostname
-  shell: "hostnamectl set-hostname {{ name }}"
+- name: Ensure hostname is in /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^{{ ansible_default_ipv4.address }}.+$"
+    line: "{{ ansible_default_ipv4.address }} {{ ansible_hostname }}"
+  register: hostname
+  tags: hostname
 
 - name: Create common Directory on NFS
-    file:
+  file:
     path: /nfs/common
     state: directory
     mode: 0777
     recurse: yes
+
+- name: create exports
+  lineinfile:
+    dest: /etc/exports
+    line: "/nfs/common *(rw,sync,no_subtree_check,no_root_squash)"
+    insertbefore: 'EOF'
+
+- name: reload service rpcbind, in all cases
+  systemd:
+    name: rpcbind
+    state: restarted
+
+- name: reload service nfs-kernel-server, in all cases
+  systemd:
+    name: nfs-kernel-server
+    state: restarted
+
+
+- name: set mountpoints
+  mount: 
+    name: /srv 
+    src: "{{ hostvars[groups['master'][0]].ansible_host }}:nfs/common"
+    fstype: nfs 
+    state: mounted
