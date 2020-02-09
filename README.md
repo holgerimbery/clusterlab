@@ -1,3 +1,4 @@
+retired - please have a look at my balena [IoT-Stack](https://github.com/holgerimbery/balena-labs)
 
 # feeder-cluster - a Raspberry Pi Cluster (RPi 3B+) without SD Cards
 
